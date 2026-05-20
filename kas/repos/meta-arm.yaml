@@ -6,7 +6,7 @@ repos:
     url: https://github.com/ARM-software/meta-arm
     branch: scarthgap
     # TODO: pin to a specific commit — run scripts/pin-layers.sh
-    commit: HEAD
+    #commit: HEAD
     path: layers/meta-arm
     layers:
       meta-arm:

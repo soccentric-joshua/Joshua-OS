@@ -5,7 +5,6 @@ header:
     - repos/meta-openembedded.yaml
     - repos/meta-arm.yaml
     - repos/meta-ti.yaml
-    - repos/meta-raspberrypi.yaml
     - repos/meta-swupdate.yaml
     - repos/meta-joshua.yaml
 

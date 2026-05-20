@@ -5,8 +5,3 @@ header:
 
 # SK-AM62A-LP (AM62A starter kit)
 machine: am62axx-evm
-
-local_conf_header:
-  ti: |
-    # TI machines do not need the Raspberry Pi proprietary firmware license flag.
-    LICENSE_FLAGS_ACCEPTED:remove = "synaptics-killswitch"

@@ -16,18 +16,12 @@ IMAGE_TARGET     ?= joshua-image
 # OTA package version (overridable: make swu SWU_VERSION=1.2.3)
 SWU_VERSION      ?= $(shell date +%Y%m%d%H%M)
 
-# Optional SWU payload extras (board-specific overrides can be passed from CLI)
-# Example for RPi5:
-#   make swu rpi5 SWU_KERNEL_PATTERN=kernel_2712.img SWU_DTB_PATTERN=bcm2712-rpi-5-b.dtb
-SWU_KERNEL_PATTERN ?= $(if $(filter $(BOARD),rpi5 cm5),kernel_2712.img,)
-SWU_DTB_PATTERN    ?= $(if $(filter $(BOARD),rpi5 cm5),bcm2712-rpi-5-b.dtb,)
-
 # --- Positional board argument -----------------------------------------------
 # The board name is typed directly after the target — no BOARD= needed:
 #   make image joshua-am62a
 #   make sdk   joshua-am62a
-#   make esdk  rpi5
-#   make shell cm5
+#   make esdk  joshua-am62a
+#   make shell joshua-am62a
 # This block MUST appear before the BOARD default and KAS_CONFIG / MACHINE
 # definitions so those variables are derived from the correct board name.
 _BOARD_TARGETS := image build rebuild-image sdk esdk sdk-image esdk-image shell swu flash
@@ -46,9 +40,7 @@ endif
 
 # --- Board -------------------------------------------------------------------
 # Select target board — must match a file in kas/boards/<BOARD>.yaml
-# Boards: joshua-am62a  rpi5  rpi4-64  rpi4  rpi3-64  rpi3  rpi2
-#         rpi0-2w-64  rpi0-2w  rpi0-wifi  rpi0  rpi1
-#         rpi-armv7  rpi-armv8  cm1  cm3  cm4  cm5
+# Boards: joshua-am62a
 BOARD            ?= joshua-am62a
 KAS_CONFIG       := kas/boards/$(BOARD).yaml
 
@@ -416,7 +408,7 @@ clean-all: clean-build
 ## Install bash tab-completion (appends a source line to ~/.bashrc)
 completion:
 	@RCFILE="$$HOME/.bashrc"; \
-	 LINE="source \"$(CURDIR)/rpi-make-completion.bash\""; \
+	 LINE="source \"$(CURDIR)/joshua-make-completion.bash\""; \
 	 if grep -qF "$$LINE" "$$RCFILE" 2>/dev/null; then \
 	     echo "Completion already enabled in $$RCFILE"; \
 	 else \
@@ -432,7 +424,7 @@ help:
 	@printf "\n  Examples:\n"
 	@printf "    make image  joshua-am62a\n"
 	@printf "    make sdk    joshua-am62a\n"
-	@printf "    make esdk   rpi5\n"
+	@printf "    make esdk   joshua-am62a\n"
 	@printf "    make flash  joshua-am62a DEVICE=/dev/sdb\n"
 	@printf "\nYocto build:\n"
 	@printf "  %-24s %s\n" "image"              "Build Yocto SD card image for BOARD  (alias for build)"
@@ -462,7 +454,5 @@ help:
 	@printf "\nUtilities:\n"
 	@printf "  %-24s %s\n" "completion"         "Install bash tab-completion into ~/.bashrc"
 	@printf "\nBoards:\n"
-	@printf "  joshua-am62a  rpi5  rpi4-64  rpi4  rpi3-64  rpi3  rpi2\n"
-	@printf "  rpi0-2w-64  rpi0-2w  rpi0-wifi  rpi0  rpi1\n"
-	@printf "  rpi-armv7  rpi-armv8  cm1  cm3  cm4  cm5\n"
+	@printf "  joshua-am62a\n"
 	@printf "\n"
