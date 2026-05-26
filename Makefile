@@ -53,6 +53,10 @@ DL_DIR           ?= $(CURDIR)/downloads
 SSTATE_DIR       ?= $(CURDIR)/sstate-cache
 DEPLOY_DIR       ?= $(CURDIR)/deploy
 
+# meta-ti redirects DEPLOY_DIR_IMAGE and SDK_DEPLOY out of tmp/ into deploy-ti/
+# All artifact paths must use this variable instead of tmp/deploy.
+TI_DEPLOY_DIR    := $(BUILD_DIR)/deploy-ti
+
 # Single timestamp for the entire invocation — keeps all artifacts in the same
 # snapshot directory and is passed explicitly to recursive make calls.
 DEPLOY_TS        := $(shell date +%Y%m%d_%H%M%S)
@@ -150,10 +154,10 @@ sdk-image: ensure-image kas-container-script
 	$(KAS_RUN) shell $(KAS_CONFIG) -c "bitbake -c populate_sdk $(IMAGE_TARGET)"
 	@echo ""
 	@echo "[2/4] Staging SDK installer into docker/sdk/ ..."
-	$(eval _SDK_SH := $(shell find $(BUILD_DIR)/tmp/deploy/sdk -maxdepth 1 \
+	$(eval _SDK_SH := $(shell find $(TI_DEPLOY_DIR)/sdk -maxdepth 1 \
 	    -name '*.sh' ! -name '*-ext-*' 2>/dev/null | sort -V | tail -1))
 	@test -n "$(_SDK_SH)" || \
-	    { echo "ERROR: SDK installer (.sh) not found in $(BUILD_DIR)/tmp/deploy/sdk"; exit 1; }
+	    { echo "ERROR: SDK installer (.sh) not found in $(TI_DEPLOY_DIR)/sdk"; exit 1; }
 	@echo "  Source : $(_SDK_SH)"
 	@echo "  Dest   : docker/sdk/sdk.sh"
 	@cp "$(_SDK_SH)" docker/sdk/sdk.sh && chmod +x docker/sdk/sdk.sh
@@ -189,10 +193,10 @@ esdk-image: ensure-image kas-container-script
 	$(KAS_RUN) shell $(KAS_CONFIG) -c "bitbake -c populate_sdk_ext $(IMAGE_TARGET)"
 	@echo ""
 	@echo "[2/4] Staging eSDK installer into docker/esdk/ ..."
-	$(eval _ESDK_SH := $(shell find $(BUILD_DIR)/tmp/deploy/sdk -maxdepth 1 \
+	$(eval _ESDK_SH := $(shell find $(TI_DEPLOY_DIR)/sdk -maxdepth 1 \
 	    -name '*-ext-*.sh' 2>/dev/null | sort -V | tail -1))
 	@test -n "$(_ESDK_SH)" || \
-	    { echo "ERROR: eSDK installer (*-ext-*.sh) not found in $(BUILD_DIR)/tmp/deploy/sdk"; exit 1; }
+	    { echo "ERROR: eSDK installer (*-ext-*.sh) not found in $(TI_DEPLOY_DIR)/sdk"; exit 1; }
 	@echo "  Source : $(_ESDK_SH)"
 	@echo "  Dest   : docker/esdk/esdk.sh"
 	@cp "$(_ESDK_SH)" docker/esdk/esdk.sh && chmod +x docker/esdk/esdk.sh
@@ -260,7 +264,7 @@ esdk: ensure-image kas-container-script
 ## Build a .swu OTA update package from the latest rootfs.ext4 image
 ## Usage: make swu   or   make swu SWU_VERSION=1.2.3
 swu: build
-	$(eval ROOTFS := $(shell find $(BUILD_DIR)/tmp/deploy/images/$(MACHINE) \
+	$(eval ROOTFS := $(shell find $(TI_DEPLOY_DIR)/images/$(MACHINE) \
 	    -name "joshua-image-$(MACHINE)*.rootfs.ext4" \
 	    -o -name "core-image-full-cmdline-$(MACHINE)*.rootfs.ext4" 2>/dev/null \
 	    | sort -V | tail -1))
@@ -274,10 +278,10 @@ swu: build
 
 	# --- optional kernel + DTB payloads ---
 	$(eval KERNEL := $(shell if [ -n "$(SWU_KERNEL_PATTERN)" ]; then \
-	    find $(BUILD_DIR)/tmp/deploy/images/$(MACHINE) -name "$(SWU_KERNEL_PATTERN)" 2>/dev/null | sort -V | tail -1; \
+	    find $(TI_DEPLOY_DIR)/images/$(MACHINE) -name "$(SWU_KERNEL_PATTERN)" 2>/dev/null | sort -V | tail -1; \
 	  fi))
 	$(eval DTB := $(shell if [ -n "$(SWU_DTB_PATTERN)" ]; then \
-	    find $(BUILD_DIR)/tmp/deploy/images/$(MACHINE) -name "$(SWU_DTB_PATTERN)" 2>/dev/null | sort -V | tail -1; \
+	    find $(TI_DEPLOY_DIR)/images/$(MACHINE) -name "$(SWU_DTB_PATTERN)" 2>/dev/null | sort -V | tail -1; \
 	  fi))
 	@if [ -n "$(SWU_KERNEL_PATTERN)" ] && [ -z "$(KERNEL)" ]; then \
 	    echo "WARNING: $(SWU_KERNEL_PATTERN) not found — kernel will not be updated in this .swu"; \
@@ -327,10 +331,10 @@ ifndef DEVICE
 endif
 	@test -b "$(DEVICE)" || \
 	    { echo "ERROR: '$(DEVICE)' is not a block device."; exit 1; }
-	$(eval WIC := $(shell find $(BUILD_DIR)/tmp/deploy/images/$(MACHINE) \
+	$(eval WIC := $(shell find $(TI_DEPLOY_DIR)/images/$(MACHINE) \
 	    -name "*.wic.bz2" 2>/dev/null | sort -V | tail -1))
 	@test -n "$(WIC)" || \
-	    { echo "ERROR: no .wic.bz2 found in $(BUILD_DIR)/tmp/deploy/images/$(MACHINE)"; exit 1; }
+	    { echo "ERROR: no .wic.bz2 found in $(TI_DEPLOY_DIR)/images/$(MACHINE)"; exit 1; }
 	@echo "Flashing $(WIC) → $(DEVICE)"
 	bmaptool copy --bmap "$(WIC:.bz2=.bmap)" "$(WIC)" "$(DEVICE)"
 
@@ -340,7 +344,7 @@ endif
 
 ## Copy .wic SD card images → deploy/images/BOARD_TS/
 deploy-images:
-	@src="$(BUILD_DIR)/tmp/deploy/images/$(MACHINE)"; \
+	@src="$(TI_DEPLOY_DIR)/images/$(MACHINE)"; \
 	 out="$(DEPLOY_DIR)/images/$(BOARD)_$(DEPLOY_TS)"; \
 	 test -d "$$src" || { echo "ERROR: No image artifacts at $$src"; exit 1; }; \
 	 echo "Deploying SD card images → $$out ..."; \
@@ -352,7 +356,7 @@ deploy-images:
 
 ## Copy cross-toolchain SDK installer → deploy/sdk/BOARD_TS/
 deploy-sdk:
-	@src="$(BUILD_DIR)/tmp/deploy/sdk"; \
+	@src="$(TI_DEPLOY_DIR)/sdk"; \
 	 out="$(DEPLOY_DIR)/sdk/$(BOARD)_$(DEPLOY_TS)"; \
 	 test -d "$$src" || { echo "ERROR: No SDK artifacts at $$src"; exit 1; }; \
 	 echo "Deploying SDK → $$out ..."; \
@@ -364,7 +368,7 @@ deploy-sdk:
 
 ## Copy extensible SDK installer → deploy/esdk/BOARD_TS/
 deploy-esdk:
-	@src="$(BUILD_DIR)/tmp/deploy/sdk"; \
+	@src="$(TI_DEPLOY_DIR)/sdk"; \
 	 out="$(DEPLOY_DIR)/esdk/$(BOARD)_$(DEPLOY_TS)"; \
 	 test -d "$$src" || { echo "ERROR: No eSDK artifacts at $$src"; exit 1; }; \
 	 echo "Deploying eSDK → $$out ..."; \
