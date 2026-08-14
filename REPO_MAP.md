@@ -1,6 +1,6 @@
 # Joshua-OS
 
-**Remote:** `git@github.com:SiliconCentric/Joshua-OS.git`
+**Remote:** `git@github.com:soccentric-joshua/Joshua-OS.git`
 **Parent project:** [Joshua](../Joshua.md) (target hardware: **TI Sitara AM62x/AM64x** SoC + PRU-ICSS south-bridge.)
 **Leaf type:** `<Project>-OS`
 **Status:** REAL — actively built out

@@ -57,7 +57,7 @@ Partition table (`meta/meta-joshua/wic/sdimage-am62x.wks`):
 | `meta-arm`          | meta-arm (scarthgap)          | ARM BSP / ATF                       |
 | `meta-ti`           | meta-ti (scarthgap)           | TI Sitara BSP, kernel, U-Boot       |
 | `meta-swupdate`     | sbabic/meta-swupdate (scarthgap) | swupdate OTA framework           |
-| `meta-joshua`       | SiliconCentric/meta-joshua (local, in `meta/`) | Joshua image, HAL, swu config |
+| `meta-joshua`       | soccentric-joshua/meta-joshua (local, in `meta/`) | Joshua image, HAL, swu config |
 
 ## Repo Notes
 
