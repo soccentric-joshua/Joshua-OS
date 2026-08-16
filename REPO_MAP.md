@@ -10,7 +10,8 @@ Built with `kas` + Docker against the TI `scarthgap` layer set, with A/B OTA
 updates via `swupdate`.
 
 **Board:** default `joshua-am62a` (machine `am62axx-evm`, SK-AM62A-LP class).
-Platform customization lives in `meta/meta-joshua` (committed locally);
+Platform customization lives in `meta/meta-joshua`, a nested clone of its own
+upstream `soccentric-joshua/meta-joshua` (fetched by kas);
 upstream layers (`poky`, `meta-openembedded`, `meta-arm`, `meta-ti`,
 `meta-swupdate`) are checked out by kas into a **gitignored** `layers/`
 directory and must never be hand-edited or tracked.
@@ -27,9 +28,8 @@ SD/eMMC → ROM → U-Boot SPL (tispl.bin) → U-Boot (u-boot.img)
 **A/B OTA layout:** `boot` (FAT32), `rootfs-a`, `rootfs-b` (ext4, switched by
 swupdate), `data` (`/home`, persistent).
 
-**Local layer:** `meta/meta-joshua` is committed in-repo (see `.gitignore`),
-matching the Acadia/Arches/Zion convention where the product layer is tracked
-locally while upstream layers are fetched by kas.
+**Local layer:** `meta/meta-joshua` is a nested clone with its own upstream
+at `soccentric-joshua/meta-joshua.git` (see `.gitignore`).
 
 ---
 Part of the `Joshua` project in the `project-managers` fleet. See
