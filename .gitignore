@@ -72,7 +72,6 @@ tmp/
 .env.*
 !.env.example
 
-# Local meta layer(s): commit meta/meta-joshua in-tree, ignore others.
+# meta/meta-joshua is a nested clone with its own upstream
+# (soccentric-joshua/meta-joshua.git), fetched by kas — never tracked here.
 meta/*
-!meta/meta-joshua/
-!meta/meta-joshua/**
