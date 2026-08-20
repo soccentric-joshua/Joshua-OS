@@ -16,6 +16,15 @@ local_conf_header:
     # Init manager
     INIT_MANAGER = "systemd"
 
+    # Joshua-Configuration's committed Cargo.lock (rust-version 1.85,
+    # edition2024 crates) needs a Rust toolchain newer than the scarthgap poky
+    # default (1.75).  Use the prebuilt 1.85.0 recipes shipped in
+    # meta/meta-joshua/recipes-devtools/rust/ instead of building Rust from
+    # source.
+    PREFERRED_VERSION_rust-native = "1.88.0"
+    PREFERRED_VERSION_cargo-native = "1.88.0"
+    PREFERRED_VERSION_libstd-rs = "1.88.0"
+
     # SD card image output
     IMAGE_FSTYPES = "wic.bz2 wic.bmap ext4"
 
