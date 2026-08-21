@@ -1,4 +1,98 @@
-# Joshua Yocto BSP
+# Joshua-OS
+
+## Project Summary
+
+Joshua-OS is Joshua’s containerized Yocto/OpenEmbedded build layer. It uses `kas` and Docker to assemble a board image, SDK, or extensible SDK from shared configuration, board definitions, and external layer manifests. The documented default is `joshua-am62a`, mapped to the TI Sitara AM62A `am62axx-evm` machine for an SK-AM62A-LP-class board. Common settings live in `kas/common.yaml`, board selections in `kas/boards/`, and external repositories in `kas/repos/`, including Poky, meta-openembedded, meta-arm, meta-ti, meta-swupdate, and meta-joshua.
+
+The Makefile is the operational entry point. It exposes image/build aliases, SDK and eSDK generation, a build-container shell, flashing through bmaptool, help output, and cleanup. The Docker-oriented structure keeps host requirements small and makes the expected kas environment explicit. This is a build system rather than a runtime application: success depends on network access to layer sources, Docker, kas-compatible metadata, board configuration, and, for flashing, a correctly identified removable device. No automated test suite is identified, so command wiring and checked-in configuration are implemented while image reproducibility, bootability, package contents, and hardware flashing remain partial or unknown.
+
+## Feature Inventory
+
+| # | Name / Description | Implemented? | Test Coverage? | Manual Test |
+|---:|---|---|---|---|
+| 1 | kas/OpenEmbedded project configuration | Implemented | No automated tests identified | [ ] Manual verification required |
+| 2 | Default Joshua AM62A board mapping | Implemented | Boot validation unknown | [ ] Manual verification required |
+| 3 | Shared distro/target/cache settings | Implemented | Unknown | [ ] Manual verification required |
+| 4 | Board-specific kas YAML files | Implemented | Unknown | [ ] Manual verification required |
+| 5 | External layer repository definitions | Implemented | Fetches environment-dependent | [ ] Manual verification required |
+| 6 | Dockerized Yocto workflow | Implemented | Unknown | [ ] Manual verification required |
+| 7 | Image build via `make image`/`make build` | Implemented | No automated test identified | [ ] Manual verification required |
+| 8 | SDK generation | Implemented | No automated test identified | [ ] Manual verification required |
+| 9 | eSDK generation | Implemented | No automated test identified | [ ] Manual verification required |
+| 10 | Interactive kas build shell | Implemented | No automated test identified | [ ] Manual verification required |
+| 11 | WIC flashing with bmaptool | Implemented | No automated test identified | [ ] Manual verification required |
+| 12 | Clean rebuild and help targets | Implemented | No automated test identified | [ ] Manual verification required |
+| 13 | Image boot/package verification | Planned | None identified | [ ] Manual verification required |
+| 14 | Offline/mirror-only build | Unknown | None identified | [ ] Manual verification required |
+
+## Common Commands
+
+```bash
+make image joshua-am62a
+make sdk joshua-am62a
+make esdk joshua-am62a
+make shell joshua-am62a
+make flash joshua-am62a DEVICE=/dev/sdX
+make clean-all && make image joshua-am62a
+```# Joshua-OS
+
+## Project Summary
+
+Joshua-OS is Joshua’s containerized Yocto/OpenEmbedded build layer. It uses
+`kas` and Docker to assemble a board image, SDK, or extensible SDK from shared
+configuration, board definitions, and external layer manifests. The documented
+default is `joshua-am62a`, mapped to the TI Sitara AM62A `am62axx-evm` machine
+for an SK-AM62A-LP-class board. Common settings live in `kas/common.yaml`,
+board-specific selections live in `kas/boards/`, and external repositories are
+declared in `kas/repos/`, including Poky, meta-openembedded, meta-arm, meta-ti,
+meta-swupdate, and meta-joshua.
+
+The Makefile is the operational entry point. It exposes image/build aliases,
+SDK and eSDK generation, a build-container shell, flashing through bmaptool,
+help output, and cleanup. The Docker-oriented structure keeps host tool
+requirements small and makes the expected kas environment explicit. The
+repository also contains changelog and repository-map documentation plus
+separate Docker makefiles for Yocto, SDK, and eSDK workflows. This is a build
+system rather than a runtime application: success depends on network access to
+layer sources, Docker, kas-compatible metadata, board configuration, and (for
+flashing) a correctly identified removable device. No automated test suite is
+identified in the repository, so the table treats command wiring and checked-in
+configuration as implemented while leaving image reproducibility, bootability,
+package contents, and hardware flashing as partial or unknown. The old quick
+start and troubleshooting guidance is retained in a more explicit inventory
+so maintainers can see exactly what has and has not been demonstrated by code.
+
+## Feature Inventory
+
+| # | Name / Description | Implemented? | Test Coverage? | Manual Test |
+|---:|---|---|---|---|
+| 1 | kas/OpenEmbedded project configuration | Implemented | Unknown; no automated tests identified | [ ] Manual verification required |
+| 2 | Default Joshua AM62A board mapping | Implemented | Configuration present; boot validation unknown | [ ] Manual verification required |
+| 3 | Shared distro, target, and cache settings | Implemented | Unknown | [ ] Manual verification required |
+| 4 | Board-specific kas YAML files | Implemented | Unknown | [ ] Manual verification required |
+| 5 | External Poky/meta layer repository definitions | Implemented | Unknown; source fetches are environment-dependent | [ ] Manual verification required |
+| 6 | Dockerized Yocto build workflow | Implemented | Unknown | [ ] Manual verification required |
+| 7 | Image build via `make image` or `make build` | Implemented | No automated test identified | [ ] Manual verification required |
+| 8 | SDK generation | Implemented | No automated test identified | [ ] Manual verification required |
+| 9 | eSDK generation | Implemented | No automated test identified | [ ] Manual verification required |
+| 10 | Interactive kas build shell | Implemented | No automated test identified | [ ] Manual verification required |
+| 11 | WIC flashing with bmaptool | Implemented | No automated test identified | [ ] Manual verification required |
+| 12 | Clean rebuild and help targets | Implemented | No automated test identified | [ ] Manual verification required |
+| 13 | Image boot/package verification on Joshua hardware | Planned | None identified | [ ] Manual verification required |
+| 14 | Reproducible offline or mirror-only build | Unknown | None identified | [ ] Manual verification required |
+
+## Common Commands
+
+```bash
+make image joshua-am62a
+make sdk joshua-am62a
+make esdk joshua-am62a
+make shell joshua-am62a
+make flash joshua-am62a DEVICE=/dev/sdX
+make clean-all && make image joshua-am62a
+```
+
+Use `make help` for the repository’s current command list.
 
 Containerized Yocto/OpenEmbedded build system using `kas` + Docker.
 
