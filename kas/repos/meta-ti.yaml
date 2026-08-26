@@ -4,9 +4,8 @@ header:
 repos:
   meta-ti:
     url: https://github.com/TexasInstruments/meta-ti
-    branch: scarthgap
-    # TODO: pin to a specific commit — run scripts/pin-layers.sh
-    #commit: HEAD
+    # Pinned to a reviewed immutable commit on scarthgap.
+    commit: 7ff810824442c56ef59fa2d705d64a03ade5f5f7
     path: layers/meta-ti
     layers:
       meta-ti-bsp:

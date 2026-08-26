@@ -94,7 +94,7 @@ _ESDK_IMAGE_TAG  := $(lastword  $(subst :, ,$(ESDK_IMAGE)))
 # =============================================================================
 # Targets
 # =============================================================================
-.PHONY: all build rebuild-image \
+.PHONY: all build pin-check rebuild-image \
         kas-image image ensure-image \
         sdk-image ensure-sdk-image \
         esdk-image ensure-esdk-image \
@@ -232,10 +232,14 @@ ensure-esdk-image: ## Run esdk-image chain only when image is absent
 # -----------------------------------------------------------------------------
 
 ## Build the Yocto image for the selected BOARD (default target)
-build: ensure-image kas-container-script ## Build Yocto SD card image for BOARD
+build: pin-check ensure-image kas-container-script ## Build Yocto SD card image for BOARD
 	@mkdir -p $(BUILD_DIR) $(DL_DIR) $(SSTATE_DIR)
 	$(KAS_RUN) build $(KAS_CONFIG)
 	@$(MAKE) --no-print-directory deploy-images DEPLOY_TS=$(DEPLOY_TS)
+
+## Verify every KAS layer is pinned to an immutable commit (fails before bitbake)
+pin-check: ## Ensure all kas/repos/*.yaml resolve to immutable commits
+	@scripts/pin-layers.sh
 
 ## Clean sstate for the image recipe then rebuild (use after adding packages)
 rebuild-image: ensure-image kas-container-script ## cleansstate image recipe, then rebuild
@@ -249,14 +253,14 @@ shell: ensure-image kas-container-script ## Interactive kas shell in the build c
 
 ## Build the cross-toolchain SDK installer and deploy it (no Docker image)
 ## Use 'make sdk-image' to also build the SDK Docker image.
-sdk: ensure-image kas-container-script ## Build cross-toolchain SDK → deploy/sdk/
+sdk: pin-check ensure-image kas-container-script ## Build cross-toolchain SDK → deploy/sdk/
 	@mkdir -p $(BUILD_DIR) $(DL_DIR) $(SSTATE_DIR)
 	$(KAS_RUN) shell $(KAS_CONFIG) -c "bitbake -c populate_sdk $(IMAGE_TARGET)"
 	@$(MAKE) --no-print-directory deploy-sdk DEPLOY_TS=$(DEPLOY_TS)
 
 ## Build the extensible SDK installer and deploy it (no Docker image)
 ## Use 'make esdk-image' to also build the eSDK Docker image.
-esdk: ensure-image kas-container-script ## Build extensible SDK     → deploy/esdk/
+esdk: pin-check ensure-image kas-container-script ## Build extensible SDK     → deploy/esdk/
 	@mkdir -p $(BUILD_DIR) $(DL_DIR) $(SSTATE_DIR)
 	$(KAS_RUN) shell $(KAS_CONFIG) -c "bitbake -c populate_sdk_ext $(IMAGE_TARGET)"
 	@$(MAKE) --no-print-directory deploy-esdk DEPLOY_TS=$(DEPLOY_TS)

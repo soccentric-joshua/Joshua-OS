@@ -7,6 +7,7 @@ header:
     - repos/meta-ti.yaml
     - repos/meta-swupdate.yaml
     - repos/meta-joshua.yaml
+    - repos/meta-webconfig.yaml
 
 distro: poky
 target: joshua-image
@@ -15,6 +16,19 @@ local_conf_header:
   base: |
     # Init manager
     INIT_MANAGER = "systemd"
+
+    # webconfigd talks to systemd over D-Bus via polkit (see its recipe's
+    # 50-webconfigd.polkit.rules). polkit is skipped unless this distro
+    # feature is enabled.
+    DISTRO_FEATURES:append = " polkit"
+
+    # polkit defaults to the mozjs JS engine, whose embedded Rust build targets
+    # the OE aarch64-poky-linux-gnu triple. This distro's Rust (libstd-rs 1.88)
+    # provides the prebuilt std only for the upstream aarch64-unknown-linux-gnu
+    # triple, which mozjs's rustc rejects (E0461 target-triple mismatch). Use
+    # the smaller duktape JS engine instead so polkit builds without mozjs.
+    PACKAGECONFIG:append:pn-polkit = " duktape"
+    PACKAGECONFIG:remove:pn-polkit = " mozjs"
 
     # Joshua-Configuration's committed Cargo.lock (rust-version 1.85,
     # edition2024 crates) needs a Rust toolchain newer than the scarthgap poky
@@ -34,6 +48,13 @@ local_conf_header:
 
     # SWUpdate: enable built-in Mongoose web server and progress IPC
     PACKAGECONFIG:append:pn-swupdate = " webserver"
+
+    # Wire the WebConfig on-device runtime into the image: the daemon, its
+    # static frontend, schema files, and the per-platform board manifest. The
+    # layer is included via repos/meta-webconfig.yaml (Joshua-Configuration's
+    # meta-webconfig). Removing this install is a deliberate, reviewed change
+    # and must also remove the layer from kas/common.yaml.
+    IMAGE_INSTALL:append = " webconfigd webconfig-static webconfig-schemas webconfig-manifest"
 
     # Required by Poky sanity checks (must match LOCALCONF_VERSION in poky)
     CONF_VERSION = "2"

@@ -4,9 +4,8 @@ header:
 repos:
   meta-arm:
     url: https://git.yoctoproject.org/meta-arm
-    branch: scarthgap
-    # TODO: pin to a specific commit — run scripts/pin-layers.sh
-    #commit: HEAD
+    # Pinned to a reviewed immutable commit on scarthgap.
+    commit: 045eb74bd9abe7d9ccf365a2417e440ce83bcbb0
     path: layers/meta-arm
     layers:
       meta-arm:

@@ -4,11 +4,10 @@ header:
 repos:
   poky:
     url: https://git.yoctoproject.org/poky
-    branch: scarthgap
-    # TODO: pin to a specific commit for reproducible builds.
-    # Run: scripts/pin-layers.sh  or set manually:
-    #   commit: <40-char-sha>
-    #commit: HEAD
+    # Pinned to a reviewed immutable commit on scarthgap for reproducible builds.
+    # Update workflow: bump `commit:` after a reviewed bump, then run the
+    # pin-check gate. See scripts/pin-layers.sh.
+    commit: 64e69ed23703f6358ec431d3f5f1f8483f974cae
     path: layers/poky
     layers:
       meta:
