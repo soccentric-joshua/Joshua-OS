@@ -1,0 +1,21 @@
+header:
+  version: 14
+
+repos:
+  # Joshua-Instrumentation ships its own Yocto layer (yocto/, collection
+  # name "instrumentation"). NOT yet added to any IMAGE_INSTALL: the
+  # recipe's COMPATIBLE_MACHINE list matches the descriptor name
+  # "sitara-am62", not Joshua-OS's actual machine (am62axx-evm), and
+  # there are no devices/capabilities/resource-profile descriptors keyed
+  # to that machine name — both leftover from this leaf starting as an
+  # unadapted Arches-Instrumentation copy. Adding the "instrumentation"
+  # package to IMAGE_INSTALL before that is fixed would fail the build
+  # ("nothing provides instrumentation"), not just ship an empty
+  # package. See Joshua-Instrumentation/yocto's layer.conf and
+  # instrumentation.bb for the parts still needing board-specific work.
+  joshua-instrumentation:
+    url: git@github.com:soccentric-joshua/Joshua-Instrumentation.git
+    branch: develop
+    path: meta/joshua-instrumentation
+    layers:
+      yocto:

@@ -8,6 +8,7 @@ header:
     - repos/meta-swupdate.yaml
     - repos/meta-joshua.yaml
     - repos/meta-webconfig.yaml
+    - repos/joshua-instrumentation.yaml
 
 distro: poky
 target: joshua-image
