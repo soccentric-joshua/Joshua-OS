@@ -3,7 +3,7 @@ header:
 
 repos:
   meta-joshua:
-    url: git@github.com:soccentric-joshua/meta-joshua.git
+    url: https://github.com/soccentric-joshua/meta-joshua.git
     # Pinned to a reviewed immutable commit for reproducible builds.
     commit: 8a089b1
     path: meta/meta-joshua

@@ -10,7 +10,7 @@ repos:
   # unmapped. Instrumentation is meant to be board-independent like
   # WebConfig, not gated on an exact per-board descriptor match.
   joshua-instrumentation:
-    url: git@github.com:soccentric-joshua/Joshua-Instrumentation.git
+    url: https://github.com/soccentric-joshua/Joshua-Instrumentation.git
     branch: develop
     path: meta/joshua-instrumentation
     layers:
