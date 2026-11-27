@@ -11,7 +11,7 @@ repos:
   # WebConfig, not gated on an exact per-board descriptor match.
   joshua-instrumentation:
     url: https://github.com/soccentric-joshua/Joshua-Instrumentation.git
-    branch: develop
+    commit: a9d580512dacb4ae3ce8dd548c9843ed25aef47f
     path: meta/joshua-instrumentation
     layers:
       yocto:

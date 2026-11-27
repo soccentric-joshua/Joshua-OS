@@ -5,7 +5,7 @@ repos:
   meta-joshua:
     url: https://github.com/soccentric-joshua/meta-joshua.git
     # Pinned to a reviewed immutable commit for reproducible builds.
-    commit: 8a089b1
+    commit: 047aded6e8f23220c2f1213a975ed32c70601154
     path: meta/meta-joshua
     layers:
       .:

@@ -7,7 +7,6 @@ header:
     - repos/meta-ti.yaml
     - repos/meta-swupdate.yaml
     - repos/meta-joshua.yaml
-    - repos/meta-webconfig.yaml
     - repos/joshua-instrumentation.yaml
 
 distro: poky
@@ -49,12 +48,7 @@ local_conf_header:
 
     # SWUpdate: web server/UI intentionally not enabled
 
-    # Wire the WebConfig on-device runtime into the image: the daemon, its
-    # static frontend, schema files, and the per-platform board manifest. The
-    # layer is included via repos/meta-webconfig.yaml (Joshua-Configuration's
-    # meta-webconfig). Removing this install is a deliberate, reviewed change
-    # and must also remove the layer from kas/common.yaml.
-    IMAGE_INSTALL:append = " webconfigd webconfig-static webconfig-schemas webconfig-manifest"
+    # WebConfig web UI intentionally not installed (removed from all OS builds).
 
     # Required by Poky sanity checks (must match LOCALCONF_VERSION in poky)
     CONF_VERSION = "2"
